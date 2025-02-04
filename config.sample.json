@@ -1,0 +1,18 @@
+{
+    "token":"<Discord App Token>",
+    "clientID":"<Discord App Client ID>",
+
+    "welcomeID":"<Discord Welcome Channel ID>",
+    "liveID":"<Discord Live Notification Channel ID>",
+    "logID":"<Discord Logs Channel ID>",
+    "guildID":"<Discord Server ID>",
+    "roleID":"<Discord Notification Role ID>",
+
+    "TTV_ID":"<Twitch App ID>",
+    "TTV_Token":"<Twitch App Token/Secret>",
+    "TTV_User":"<Twitch App User Name>",
+    "TTV_ModID":"<Twitch User Account Numerical ID>",
+    "TTV_Prefix":"<Twitch Command Prefix>",
+
+    "mongoURI":"<MongoDB Connection String>"
+}
