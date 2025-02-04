@@ -1,0 +1,21 @@
+{
+  "name": "helbot-v3",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "devStart": "nodemon -L index.js"
+  },
+  "author": "DeSqBlocki",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^14.7.1",
+    "node-fetch": "^3.3.0",
+    "simple-helix-api": "^4.0.2",
+    "tmi.js": "^1.8.5"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.3",
+    "nodemon": "^2.0.20"
+  }
+}
