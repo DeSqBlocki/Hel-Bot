@@ -1,0 +1,16 @@
+{
+  "name": "helbot",
+  "version": "1.0.2",
+  "description": "Simple Chatbot for x__hel__x",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "DeSqBlocki",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "lol-query": "^0.0.5",
+    "tmi.js": "^1.8.5"
+  }
+}
