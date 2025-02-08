@@ -1,9 +1,10 @@
-const { dClient, mClient, tClient } = require('../..')
-
-
 require('dotenv').configDotenv
-
-const knownBots = new Set(['streamlabs', 'nightbot', 'moobot', 'soundalerts', 'streamelements', 'remasuri_bot', 'commanderroot', 'x__hel_bot__x'])
+module.exports = {
+    name: 'Twitch/Message',
+    once: false,
+    async execute(channel, userstate, message, self, tClient) {
+        const { dClient, mClient } = require('../../index')
+        const knownBots = new Set(['streamlabs', 'nightbot', 'moobot', 'soundalerts', 'streamelements', 'remasuri_bot', 'commanderroot', 'x__hel_bot__x'])
 async function updateChatMode(userID, setTo) {
     let state
     if (setTo === 'on') {
@@ -19,6 +20,7 @@ async function updateChatMode(userID, setTo) {
         subscriber_mode: state,
         emote_mode: state
     });
+    
 }
 async function getIDByName(user) {
     const result = await Helix.users.get(user);
@@ -37,10 +39,6 @@ async function verifyUser(channel, username) {
         })
     }
 }
-module.exports = {
-    name: 'Twitch/Message',
-    once: false,
-    async execute(channel, userstate, message, self) {
         if (self) { return }
         if (knownBots.has(userstate.username)) { return }
 

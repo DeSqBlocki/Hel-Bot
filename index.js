@@ -162,7 +162,6 @@ const dClient = new Client({
         GatewayIntentBits.MessageContent,
     ],
 });
-exports.dClient = dClient;
 
 // Load Discord event handlers
 fs.readdirSync('./handlers').forEach((handler) => {
@@ -219,19 +218,19 @@ async function tLogin() {
 
     // Handle Twitch events
     tClient.on('connected', (address, port) => {
-        dClient.emit('Twitch/Connected', address, port);
+        dClient.emit('Twitch/Connected', address, port, tClient);
     });
 
     tClient.on('message', async (channel, userstate, message, self) => {
-        dClient.emit('Twitch/Message', channel, userstate, message, self);
+        dClient.emit('Twitch/Message', channel, userstate, message, self, tClient);
     });
 
     tClient.on('raided', (channel, username, viewers) => {
-        dClient.emit('Twitch/Raided', channel, username, viewers);
+        dClient.emit('Twitch/Raided', channel, username, viewers, tClient);
     });
 
     tClient.on('subscribers', (channel, enabled) => {
-        dClient.emit('Twitch/Subscribers', channel, enabled);
+        dClient.emit('Twitch/Subscribers', channel, enabled, tClient);
     });
 
     tClient.on('disconnected', (reason) => {
@@ -248,3 +247,4 @@ async function tLogin() {
 
 tLogin();
 
+module.exports = { mClient, dClient };
