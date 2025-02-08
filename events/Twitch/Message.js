@@ -3,41 +3,19 @@ module.exports = {
     name: 'Twitch/Message',
     once: false,
     async execute(channel, userstate, message, self, tClient) {
-        const { dClient, mClient, makeTwitchRequest } = require('../../index')
+        const { dClient, mClient, getIDByName, updateChatMode} = require('../../index')
         const knownBots = new Set(['streamlabs', 'nightbot', 'moobot', 'soundalerts', 'streamelements', 'remasuri_bot', 'commanderroot', 'x__hel_bot__x'])
-        async function updateChatMode(userID, setTo) {
-            let state
-            if (setTo === 'on') {
-                state = true
-            } else if (setTo === 'off') {
-                state = false
-            } else {
-                return
-            }
-            await Helix.chat.updateSettings(userID, process.env.MOD_ID, {
-                follower_mode: state,
-                follower_mode_duration: 0,
-                subscriber_mode: state,
-                emote_mode: state
-            });
-
-        }
-        async function getIDByName(user) {
-            // Function to convert Names to ID
-            const result = await Helix.users.get(user);
-            return result.data[0].id
-        }
-        async function verifyUser(channel, username) {
-            // Function checks if user is a target to shout out, default target: VIPs
+        async function emitShoutoutInfo(channel, username) {
+            // Function sends information to the Shoutout Handler if they haven't been shouted out before, default target: VIPs
             let db = mClient.db("shoutouts")
             let col = db.collection(channel)
-
-            let query = { user: username }
-            let status = await col.findOne(query)
+            let status = await col.findOne({ user: username })
+            
             if (!status) {
-                dClient.emit('TwitchShoutout', "VIP", channel, username)
+                dClient.emit('Twitch/Shoutout', "VIP", channel, username, tClient)
                 await col.insertOne({
-                    user: username
+                    user: username,
+                    created_at: Date()
                 })
             }
         }
@@ -61,6 +39,7 @@ module.exports = {
             return tClient.say(channel, positive_Messages[rdm])
         }
         async function sendDonationAd() {
+            // Function to send static donate ad
             const links = ["https://bit.ly/heltwittergoals", "https://bit.ly/donatetohel", "http://bit.ly/donothon_goals"]
             tClient.say(channel, "Hel is currently celebrating her birthday with a donathon!")
             tClient.say(channel, `You can see goals and incentives here: ${links[0]}`)
@@ -85,9 +64,6 @@ module.exports = {
             const args = message.substring(1).split(" ")
             const cmd = args[0]
             switch (cmd) {
-                // case "test":
-                //     tClient.say(channel, "/me This is a test message")
-                //     break;
                 case "mode":
                     if (userstate.badges.moderator != 1 && userstate.badges.broadcaster != 1) { break } // return stops all further operations, so you should just break out of switch
                     let regex = /^(on|off)$/
@@ -98,7 +74,8 @@ module.exports = {
                     sendDonationAd()
                     break;
                 case "test":
-                    console.log(await makeTwitchRequest('games/top'))
+                    await emitShoutoutInfo(channel, userstate.username)
+                    // console.log(await getIDByName(userstate))
                     break;
                 case "positivity":
                     sendPositivity()
@@ -109,8 +86,8 @@ module.exports = {
         }
 
         // ---------------VIP Handler-------------------
-        // if (!userstate.badges?.vip) { return }
-        // verifyUser(channel, userstate.username)
+        if (!userstate.badges?.vip) { return }
+        emitShoutoutInfo(channel, userstate.username)
         // ---------------------------------------------
     }
 

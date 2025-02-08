@@ -12,10 +12,10 @@ module.exports = (dClient) => {
             const filePath = path.join(eventsPath, file)
             const event = require(filePath)
             if (event.once) {
-                dClient.once(event.name, (...args) => event.execute(...args, dClient))
+                dClient.once(event.name, (...args) => event.execute(...args))
                 // added client to commomerate global usage
             } else {
-                dClient.on(event.name, (...args) => event.execute(...args, dClient))
+                dClient.on(event.name, (...args) => event.execute(...args))
                 // added client to commomerate global usage
             }
         }

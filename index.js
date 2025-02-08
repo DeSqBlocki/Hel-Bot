@@ -7,7 +7,7 @@ const axios = require('axios');
 
 // Validate required environment variables
 function validateEnvVariables() {
-    const requiredVars = ['MONGO_URI', 'MONGO_DB'];
+    const requiredVars = ['MONGO_URI'];
     const missingVars = requiredVars.filter((varName) => !process.env[varName]);
 
     if (missingVars.length > 0) {
@@ -36,7 +36,7 @@ initializeMongoClient();
 
 // Function to save tokens to MongoDB
 async function saveToken(access_token, refresh_token, expiresIn, scope) {
-    const db = mClient.db(process.env.MONGO_DB);
+    const db = mClient.db("clients");
     const credentialCollection = db.collection('credentials');
 
     const tokenData = {
@@ -57,7 +57,7 @@ async function saveToken(access_token, refresh_token, expiresIn, scope) {
 
 // Function to retrieve stored tokens from MongoDB
 async function getStoredToken() {
-    const db = mClient.db(process.env.MONGO_DB);
+    const db = mClient.db("clients");
     const credentialCollection = db.collection('credentials');
 
     const tCreds = await credentialCollection.findOne({ service: 'twitch' });
@@ -82,7 +82,7 @@ async function refreshAccessToken() {
     isRefreshingToken = true;
     refreshPromise = (async () => {
         try {
-            const db = mClient.db(process.env.MONGO_DB);
+            const db = mClient.db("clients");
             const credentialCollection = db.collection('credentials');
             const credentials = await credentialCollection.findOne({ service: 'twitch' });
             const token = await getStoredToken();
@@ -121,8 +121,8 @@ async function refreshAccessToken() {
 }
 
 // Function to make requests to the Twitch API
-async function makeTwitchRequest(endpoint) {
-    const db = mClient.db(process.env.MONGO_DB);
+async function makeHelixRequest(requestType, endpoint, params, data) {
+    const db = mClient.db("clients");
     const credentialCollection = db.collection('credentials');
     const credentials = await credentialCollection.findOne({ service: 'twitch' });
 
@@ -133,27 +133,77 @@ async function makeTwitchRequest(endpoint) {
     }
 
     try {
-        const response = await axios.get(`https://api.twitch.tv/helix/${endpoint}`, {
-            headers: {
-                'Client-Id': credentials.client_id,
-                'Authorization': `Bearer ${token.access_token}`,
-            },
-        });
+        var response
+        var headers = {
+            'Client-Id': credentials.client_id,
+            'Authorization': `Bearer ${token.access_token}`,
+        }
+        switch (requestType) {
+            case 'GET':
+                response = await axios.get(`https://api.twitch.tv/helix/${endpoint}`, { headers, params });
+                return response.data;
+                break;
+            case 'PATCH':
+                response = await axios.patch(`https://api.twitch.tv/helix/${endpoint}`, data, { headers, params })
+                return response.data;
+                break;
+            default:
+                break;
+        }
 
-        return response.data;
+        
+
     } catch (error) {
         if (error.response?.status === 401) {
             console.log('Access token expired. Refreshing...');
             const newToken = await refreshAccessToken();
             if (newToken) {
-                return makeTwitchRequest(endpoint); // Retry with new token
+                return makeHelixRequest(requestType, endpoint, params, data); // Retry with new token
             }
         }
 
         console.error('Twitch API request failed:', error.response?.data || error.message);
     }
 }
+async function getIDByName(user) {
+    // Function to convert Names to ID
+    let endpoint = `users`
+    let params = {
+        login: user
+    }
+    let res = await makeHelixRequest('GET', endpoint, params)
+    return res?.data[0]?.id
+}
+async function updateChatMode(broadcaster_id, setTo) {
+    let state
+    if (setTo === 'on') {
+        state = true
+    } else if (setTo === 'off') {
+        state = false
+    } else {
+        return
+    }
+    let db = mClient.db('clients')
+    let credentialCollection = db.collection('credentials')
+    let credentials = await credentialCollection.findOne({ service: 'twitch' })
 
+    let endpoint = `chat/settings`
+    let data = {
+        "follower_mode": state,
+        "follower_mode_duration": 0,
+        "subscriber_mode": state,
+        "emote_mode": state
+    }
+    let params = {
+        broadcaster_id: broadcaster_id,
+        moderator_id: credentials.mod_id
+    }
+    makeHelixRequest('PATCH', endpoint, params, data)
+
+}
+async function getChannelInformation(broadcaster_id){
+    return response = await makeHelixRequest('GET', 'channels', { broadcaster_id: broadcaster_id })
+}
 // Initialize Discord Client
 const dClient = new Client({
     intents: [
@@ -171,7 +221,7 @@ fs.readdirSync('./handlers').forEach((handler) => {
 // Function to log in to Discord
 async function dLogin() {
     try {
-        const db = mClient.db(process.env.MONGO_DB);
+        const db = mClient.db("clients");
         const credentialCollection = db.collection('credentials');
         const dCreds = await credentialCollection.findOne({ service: 'discord' });
 
@@ -191,7 +241,7 @@ dLogin();
 // Function to log in to Twitch
 async function tLogin() {
     const channels = ['desq_blocki'];
-    const db = mClient.db(process.env.MONGO_DB);
+    const db = mClient.db("clients");
     const credentialCollection = db.collection('credentials');
     const tCreds = await credentialCollection.findOne({ service: 'twitch' });
 
@@ -246,7 +296,7 @@ async function tLogin() {
                     console.warn('Twitch client already disconnected:', err.message);
                 }
 
-                const db = mClient.db(process.env.MONGO_DB);
+                const db = mClient.db("clients");
                 const credentialCollection = db.collection('credentials');
                 const tCreds = await credentialCollection.findOne({ service: 'twitch' });
 
@@ -277,4 +327,4 @@ process.on('unhandledRejection', (reason, promise) => {
     // Prevent app from crashing
 });
 
-module.exports = { mClient, dClient, makeTwitchRequest };
+module.exports = { mClient, dClient, makeHelixRequest, getIDByName, updateChatMode, getChannelInformation };

@@ -25,7 +25,7 @@ const initializeClients = async () => {
         ],
     });
 
-    const db = mClient.db(process.env.MONGO_DB);
+    const db = mClient.db("client");
     const credentialCollection = db.collection('credentials');
     const dCreds = await credentialCollection.findOne({ service: 'discord' });
     const tCreds = await credentialCollection.findOne({ service: 'twitch' });

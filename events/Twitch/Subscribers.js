@@ -2,7 +2,17 @@
 module.exports = {
     name: 'Twitch/Subscribers',
     once: false,
-    execute(stream) {
-        console.log(`Connected to ${stream.address}`)
+    async execute(channel, enabled) {
+        const { mClient } = require('../..')
+
+        let db = mClient.db('shoutouts')
+        let col = db.collection(channel)
+
+        // Drop Shoutout Collection to reset 
+        try {
+            await col.drop()
+        } catch (error) {
+            return
+        }
     }
 }
