@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, Events } = require('discord.js')
+const { SlashCommandBuilder, Events, MessageFlags } = require('discord.js')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -8,7 +8,7 @@ module.exports = {
         if(!interaction.member.permissions.has("ADMINISTRATOR")){ 
             return await interaction.reply({
                 content: "Unprivileged Access!",
-                ephemeral: true
+                flags: MessageFlags.Ephemeral
             })
         }
         
@@ -16,7 +16,7 @@ module.exports = {
         interaction.client.emit('TwitchLive', streamer)
         await interaction.reply({
             content: "Done!",
-            ephemeral: true
+            flags: MessageFlags.Ephemeral
         })
         
     }

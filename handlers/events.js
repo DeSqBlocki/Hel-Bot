@@ -1,6 +1,6 @@
 const fs = require('node:fs')
 const path = require('node:path');
-const { dClient, mClient, tClient } = require('..');
+var { dClient, mClient, tClient } = require('..');
 const { refreshAccessToken } = require('../functions');
 const tmi = require('tmi.js')
 

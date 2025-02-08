@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, Events } = require('discord.js')
+const { SlashCommandBuilder, Events, MessageFlags } = require('discord.js')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('simjoin')
@@ -10,7 +10,7 @@ module.exports = {
         if(!interaction.member.permissions.has("ADMINISTRATOR")){ 
             return await interaction.reply({
                 content: "Unprivileged Access!",
-                ephemeral: true
+                flags: MessageFlags.Ephemeral
             })
         }
         
@@ -23,13 +23,13 @@ module.exports = {
                 interaction.client.emit(Events.GuildMemberAdd, target)
                 await interaction.reply({
                     content: "Done!",
-                    ephemeral: true
+                    flags: MessageFlags.Ephemeral
                 })
             }
         } catch (error) {
             await interaction.reply({
                 content: "Invalid Mentionable!",
-                ephemeral: true
+                flags: MessageFlags.Ephemeral
             })
         }
         
