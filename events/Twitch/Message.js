@@ -3,14 +3,14 @@ module.exports = {
     name: 'Twitch/Message',
     once: false,
     async execute(channel, userstate, message, self, tClient) {
-        const { dClient, mClient, getIDByName, updateChatMode} = require('../../index')
+        const { dClient, mClient, getIDByName, updateChatMode } = require('../../index')
         const knownBots = new Set(['streamlabs', 'nightbot', 'moobot', 'soundalerts', 'streamelements', 'remasuri_bot', 'commanderroot', 'x__hel_bot__x'])
         async function emitShoutoutInfo(channel, username) {
             // Function sends information to the Shoutout Handler if they haven't been shouted out before, default target: VIPs
             let db = mClient.db("shoutouts")
             let col = db.collection(channel)
             let status = await col.findOne({ user: username })
-            
+
             if (!status) {
                 dClient.emit('Twitch/Shoutout', "VIP", channel, username, tClient)
                 await col.insertOne({
@@ -21,7 +21,8 @@ module.exports = {
         }
         async function sendPositivity() {
             // Function sends a random string of predetermined positivity, Donothon Top Donator Reward
-            let positive_Messages = ["You are so very worthy of all the love and support that may come your way.",
+            let positive_Messages = [
+                "You are so very worthy of all the love and support that may come your way.",
                 "There are many things which draw us together. In this time and place, that lovely subject is you, Hel.",
                 "The happiness and joy you add to the world is worth more than most anything.",
                 "You deserve every warm laugh, bright smile, and all the genuine kindness given to you.",
@@ -33,30 +34,49 @@ module.exports = {
                 "Every day you give your best and that is so admirable. Don't let anyone tell you otherwise.",
                 "Your light is like that of the full moon, brightening our lives even in our darkest moments.",
                 "It's okay to take a moment to catch your breath. Even machines require maintenance from time to time.",
-                "Watching you succeed and achieve your heart's desires gives me so much motivation and I am very grateful for it."]
+                "Watching you succeed and achieve your heart's desires gives me so much motivation and I am very grateful for it."
+            ]
 
             let rdm = Math.floor(Math.random() * positive_Messages.length)
             return tClient.say(channel, positive_Messages[rdm])
         }
         async function sendDonationAd() {
             // Function to send static donate ad
-            const links = ["https://bit.ly/heltwittergoals", "https://bit.ly/donatetohel", "http://bit.ly/donothon_goals"]
-            tClient.say(channel, "Hel is currently celebrating her birthday with a donathon!")
-            tClient.say(channel, `You can see goals and incentives here: ${links[0]}`)
-            tClient.say(channel, `You can donate here: ${links[1]}`)
-            tClient.say(channel, `Terms, conditions, rules and how rewards work are found here: ${links[2]}`)
-            tClient.say(channel, `All donations and gifts are greatly appreciated, but please do so responsibly!`)
+            const links = [
+                "https://bit.ly/heltwittergoals",
+                "https://bit.ly/donatetohel",
+                "http://bit.ly/donothon_goals"
+            ];
+        
+            const messages = [
+                "Hel is currently celebrating her birthday with a donathon!",
+                `You can see goals and incentives here: ${links[0]}`,
+                `You can donate here: ${links[1]}`,
+                `Terms, conditions, rules and how rewards work are found here: ${links[2]}`,
+                "All donations and gifts are greatly appreciated, but please do so responsibly!"
+            ];
+        
+            for (const message of messages) {
+                await tClient.say(channel, message);
+            }
         }
+        
 
         if (self) { return }
         if (knownBots.has(userstate.username)) { return }
 
-        if (message.toLowerCase().includes('caw')) {
-            tClient.say(channel, 'CAW!')
-        } else if (message.toLowerCase().includes('kweh')) {
-            tClient.say(channel, 'KWEH!')
-        } else if (message.toLowerCase().includes('kaw')) {
-            tClient.say(channel, 'KAW!')
+        const reactTriggers = {
+            caw: 'CAW!',
+            kaw: 'KAW!',
+            kweh: 'KWEH!'
+        }
+
+        const reactRegex = /(caw|kweh|kaw)/i // Non-Strict Trigger
+        // const reactRegex = /\b(caw|kaw|kweh)\b/i; // Strict Trigger 
+
+        if (reactRegex.test(message)) {
+            const match = message.match(reactRegex)[0].toLowerCase();
+            tClient.say(channel, reactTriggers[match]);
         }
 
 
