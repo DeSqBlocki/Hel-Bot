@@ -200,7 +200,7 @@ async function tLogin() {
         return;
     }
 
-    const tClient = new tmi.Client({
+    var tClient = new tmi.Client({
         options: { debug: false },
         connection: {
             reconnect: true,
@@ -214,7 +214,7 @@ async function tLogin() {
     });
 
     tClient.connect();
-    
+
 
     // Handle Twitch events
     tClient.on('connected', (address, port) => {
@@ -233,18 +233,48 @@ async function tLogin() {
         dClient.emit('Twitch/Subscribers', channel, enabled, tClient);
     });
 
-    tClient.on('disconnected', (reason) => {
-        console.log('Twitch client disconnected:', reason);
+    tClient.on('disconnected', async (reason) => {
+        console.log('Twitch disconnected:', reason);
         if (reason.includes('Login authentication failed')) {
-            refreshAccessToken()
-                .then(() => tClient.connect())
-                .catch((error) => {
-                    console.error('Failed to refresh token and reconnect:', error);
+            try {
+                await refreshAccessToken();
+                console.log('Reinitializing Twitch client after token refresh...');
+
+                try {
+                    await tClient.disconnect();
+                } catch (err) {
+                    console.warn('Twitch client already disconnected:', err.message);
+                }
+
+                const db = mClient.db(process.env.MONGO_DB);
+                const credentialCollection = db.collection('credentials');
+                const tCreds = await credentialCollection.findOne({ service: 'twitch' });
+
+                // Recreate the client
+                tClient = new tmi.Client({
+                    options: { debug: false },
+                    connection: { reconnect: true, secure: true },
+                    identity: {
+                        username: tCreds.username,
+                        password: `oauth:${tCreds.token.access_token}`,
+                    },
+                    channels: channels,
                 });
+
+                await tClient.connect();
+                console.log('Twitch client reconnected successfully.');
+            } catch (error) {
+                console.error('Failed to refresh token and reconnect:', error);
+            }
         }
     });
 }
 
 tLogin();
 
-module.exports = { mClient, dClient };
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    // Prevent app from crashing
+});
+
+module.exports = { mClient, dClient, makeTwitchRequest };
