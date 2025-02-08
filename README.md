@@ -17,6 +17,11 @@ HelBot v5 introduces an improved background logic structure, streamlined integra
 - `user`  
 - `created_at`  
 
+**guilds.id**:  
+- `_id`  
+- `settings`
+- `channels` 
+
 ### Chat Commands:
 
 **Update Chat Mode** (Mods & Broadcaster only)  

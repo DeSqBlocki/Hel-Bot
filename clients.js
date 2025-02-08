@@ -3,18 +3,14 @@ const { MongoClient } = require('mongodb');
 const { Client, GatewayIntentBits } = require('discord.js');
 const tmi = require('tmi.js');
 const channels = ['x__hel__x', 'desq_blocki'];
+require('dotenv').config()
 
 let mClient, dClient, tClient; // Global references
 
 const initializeClients = async () => {
-    // Disconnect existing clients if they exist
-    if (tClient) await tClient.disconnect().catch(() => {});
-    if (dClient) await dClient.destroy().catch(() => {});
-    if (mClient) await mClient.close().catch(() => {});
-
     // Initialize MongoDB Client
     mClient = new MongoClient(process.env.MONGO_URI);
-    await mClient.connect();
+    mClient.connect();
 
     // Initialize Discord Client
     dClient = new Client({
@@ -25,7 +21,7 @@ const initializeClients = async () => {
         ],
     });
 
-    const db = mClient.db("client");
+    const db = mClient.db("clients");
     const credentialCollection = db.collection('credentials');
     const dCreds = await credentialCollection.findOne({ service: 'discord' });
     const tCreds = await credentialCollection.findOne({ service: 'twitch' });
