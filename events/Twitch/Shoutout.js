@@ -16,8 +16,7 @@ module.exports = {
                 // tClient.say(channel, `!so ${user}`); // Send the shoutout command
 
                 // Use custom shoutout
-                let channelID = await getIDByName(user)
-                let res = await getChannelInformation(channelID)
+                let res = await getChannelInformation(user)
                 let channelInfo = res?.data[0]
                 let shoutoutMessage = `Check out ${channelInfo.broadcaster_name} over at https://twitch.tv/${channelInfo.broadcaster_login}! They were last playing ${channelInfo.game_name}`
                 tClient.say(channel, shoutoutMessage)

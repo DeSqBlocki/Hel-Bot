@@ -42,12 +42,12 @@ async function getChannel(interaction) {
         })
 
         return interaction.editReply({
-            content: `#${res.channel} previously set for Event: ${event}`,
+            content: `<#${res.channel}> was previously set for Event: ${event}`,
             flags: MessageFlags.Ephemeral
         })
     } catch (error) {
         return interaction.editReply({
-            content: `**[ERROR]:** There was an error updating the database: ${error}`,
+            content: `**[ERROR]:** ${event} is currently not set to any channel`,
             flags: MessageFlags.Ephemeral
         }).then(setTimeout(() => {
             interaction.deleteReply()

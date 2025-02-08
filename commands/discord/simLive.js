@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, Events, MessageFlags } = require('discord.js')
+const { SlashCommandBuilder, MessageFlags } = require('discord.js')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -13,11 +13,10 @@ module.exports = {
         }
         
         const streamer = 'x__hel__x'
-        interaction.client.emit('TwitchLive', streamer)
+        interaction.client.emit('Twitch/Live', streamer)
         await interaction.reply({
             content: "Done!",
             flags: MessageFlags.Ephemeral
         })
-        
     }
 }

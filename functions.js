@@ -156,7 +156,8 @@ async function updateChatMode(broadcaster_id, setTo) {
 }
 
 // Get channel information
-async function getChannelInformation(broadcaster_id) {
+async function getChannelInformation(streamer) {
+    const broadcaster_id = await getIDByName(streamer)
     return await makeHelixRequest('GET', 'channels', { broadcaster_id });
 }
 
