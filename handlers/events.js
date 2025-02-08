@@ -1,6 +1,8 @@
 const fs = require('node:fs')
 const path = require('node:path');
 const { dClient, mClient, tClient } = require('..');
+const { refreshAccessToken } = require('../functions');
+const tmi = require('tmi.js')
 
 const folderPath = path.join(__dirname, '../events')
 const eventFolders = fs.readdirSync(folderPath)
@@ -66,7 +68,7 @@ tClient.on('disconnected', async (reason) => {
                     username: tCreds.username,
                     password: `oauth:${tCreds.token.access_token}`,
                 },
-                channels: channels,
+                channels: tClient.channels,
             });
 
             await tClient.connect();

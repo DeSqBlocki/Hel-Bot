@@ -1,11 +1,8 @@
 // index.js
-const { MongoClient } = require('mongodb');
-const dotenv = require('dotenv');
+require('dotenv').configDotenv
 const fs = require('fs');
-const axios = require('axios');
 const initializeClients = require('./clients');
 
-dotenv.config();
 
 // Validate required environment variables
 function validateEnvVariables() {
@@ -22,7 +19,7 @@ function validateEnvVariables() {
 async function startApp() {
     const { mClient, dClient, tClient } = await initializeClients();
     validateEnvVariables();
-
+    tClient.connect()
     // Export initialized clients
     module.exports = { mClient, dClient, tClient };
 

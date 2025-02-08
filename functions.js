@@ -1,3 +1,6 @@
+const { default: axios } = require("axios");
+const { mClient } = require(".");
+
 // Delay function for pauses
 function delay(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
@@ -11,7 +14,7 @@ async function saveToken(access_token, refresh_token, expiresIn, scope) {
         refresh_token,
         scope,
         expiresIn,
-        obtainedAt: Date.now(),
+        obtainedAt: Date(),
     };
 
     await credentialCollection.updateOne(
@@ -156,3 +159,5 @@ async function updateChatMode(broadcaster_id, setTo) {
 async function getChannelInformation(broadcaster_id) {
     return await makeHelixRequest('GET', 'channels', { broadcaster_id });
 }
+
+module.exports = { getChannelInformation, updateChatMode, getIDByName, makeHelixRequest, delay, refreshAccessToken }
