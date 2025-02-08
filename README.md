@@ -22,7 +22,7 @@ HelBot v5 introduces an improved background logic structure, streamlined integra
 **Update Chat Mode** (Mods & Broadcaster only)  
 - `$mode [on:off]`  
 
-**Get a Random Positive Reminder** (All)  
+**Get a Random Positive Reminder**  
 - `$positivity`  
 
 **View Donothon/Charity Event Information**  
