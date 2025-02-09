@@ -28,53 +28,21 @@ for (const folder of eventFolders) {
 
 // Handle Twitch events
 tClient.on('connected', (address, port) => {
-    dClient.emit('Twitch/Connected', address, port, tClient);
+    dClient.emit('Twitch/Connected', address, port);
 });
 
 tClient.on('message', async (channel, userstate, message, self) => {
-    dClient.emit('Twitch/Message', channel, userstate, message, self, tClient);
+    dClient.emit('Twitch/Message', channel, userstate, message, self);
 });
 
 tClient.on('raided', (channel, username, viewers) => {
-    dClient.emit('Twitch/Raided', channel, username, viewers, tClient);
+    dClient.emit('Twitch/Raided', channel, username, viewers);
 });
 
 tClient.on('subscribers', (channel, enabled) => {
-    dClient.emit('Twitch/Subscribers', channel, enabled, tClient);
+    dClient.emit('Twitch/Subscribers', channel, enabled);
 });
 
 tClient.on('disconnected', async (reason) => {
-    console.log('Twitch disconnected:', reason);
-    if (reason.includes('Login authentication failed')) {
-        try {
-            await refreshAccessToken();
-            console.log('Reinitializing Twitch client after token refresh...');
-
-            try {
-                await tClient.disconnect();
-            } catch (err) {
-                console.warn('Twitch client already disconnected:', err.message);
-            }
-
-            const db = mClient.db("clients");
-            const credentialCollection = db.collection('credentials');
-            const tCreds = await credentialCollection.findOne({ service: 'twitch' });
-
-            // Recreate the client
-            tClient = new tmi.Client({
-                options: { debug: false },
-                connection: { reconnect: true, secure: true },
-                identity: {
-                    username: tCreds.username,
-                    password: `oauth:${tCreds.token.access_token}`,
-                },
-                channels: tClient.channels,
-            });
-
-            await tClient.connect();
-            console.log('Twitch client reconnected successfully.');
-        } catch (error) {
-            console.error('Failed to refresh token and reconnect:', error);
-        }
-    }
+    dClient.emit('Twitch/Disconnected', reason)
 });

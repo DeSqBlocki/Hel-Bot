@@ -1,4 +1,5 @@
-const { getChannelInformation, getIDByName } = require("../../functions");
+const { tClient } = require("../..");
+const { getChannelInformation } = require("../../functions");
 
 // Event triggered by Custom Shoutout emitted in Messages.js
 const soBuffer = new Map();
@@ -7,7 +8,7 @@ let isShoutoutInProgress = false;  // Track shoutout status to avoid overlapping
 module.exports = {
     name: 'Twitch/Shoutout',
     once: false,
-    async execute(reason, channel, username, tClient) {
+    async execute(reason, channel, username) {
         
         // Function to perform shoutout (Nightbot or custom)
         async function doShoutouts(channel, user) {

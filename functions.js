@@ -1,5 +1,8 @@
-const { default: axios } = require("axios");
+const axios = require("axios");
 const { mClient } = require(".");
+const ReconnectingWebSocket = require("reconnecting-websocket");
+const { WebSocket } = require("ws");
+const twitchEventSubWsUrl = 'wss://eventsub.wss.twitch.tv/ws';
 
 // Delay function for pauses
 function delay(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
@@ -161,7 +164,7 @@ async function getChannelInformation(streamer) {
     return await makeHelixRequest('GET', 'channels', { broadcaster_id });
 }
 
-async function getStreams(user_login){
+async function getStreams(user_login) {
     return await makeHelixRequest('GET', 'streams', { user_login });
 }
 

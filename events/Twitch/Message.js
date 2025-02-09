@@ -1,11 +1,11 @@
-const { mClient, dClient } = require('../..')
+const { mClient, dClient, tClient } = require('../..')
 const { updateChatMode, getIDByName } = require('../../functions')
 
 require('dotenv').configDotenv
 module.exports = {
     name: 'Twitch/Message',
     once: false,
-    async execute(channel, userstate, message, self, tClient) {
+    async execute(channel, userstate, message, self) {
         const knownBots = new Set(['streamlabs', 'nightbot', 'moobot', 'soundalerts', 'streamelements', 'remasuri_bot', 'commanderroot', 'x__hel_bot__x'])
         async function emitShoutoutInfo(channel, username) {
             // Function sends information to the Shoutout Handler if they haven't been shouted out before, default target: VIPs
