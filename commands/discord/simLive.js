@@ -12,8 +12,11 @@ module.exports = {
             })
         }
         
-        const streamer = 'x__hel__x'
-        interaction.client.emit('Twitch/Live', streamer)
+        const stream = {
+            broadcaster_user_login: 'x__hel__x'
+        }
+        
+        interaction.client.emit('Twitch/Online', stream)
         await interaction.reply({
             content: "Done!",
             flags: MessageFlags.Ephemeral

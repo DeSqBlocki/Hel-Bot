@@ -71,7 +71,7 @@ module.exports = {
                             { "name": "When a user left this server", "value": "GuildMemberRemove" },
                             { "name": "When it's a users birthday", "value": "Discord/Birthday" },
                             { "name": "When debug logs are sent", "value": "Discord/Logs" },
-                            { "name": "When stream is live", "value": "Twitch/Live" }
+                            { "name": "When stream is live", "value": "Twitch/Online" }
                         ])
                         .setRequired(true)
                 )
@@ -96,7 +96,7 @@ module.exports = {
                             { "name": "When a user left this server", "value": "GuildMemberRemove" },
                             { "name": "When it's a users birthday", "value": "Discord/Birthday" },
                             { "name": "When debug logs are sent", "value": "Discord/Logs" },
-                            { "name": "When stream is live", "value": "Twitch/Live" }
+                            { "name": "When stream is live", "value": "Twitch/Online" }
                         ])
                         .setRequired(true)
                 )

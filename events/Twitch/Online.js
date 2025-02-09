@@ -3,18 +3,19 @@ const { mClient, dClient } = require("../..")
 const { getStreams } = require('../../functions')
 
 module.exports = {
-    name: 'Twitch/Live',
+    name: 'Twitch/Online',
     once: false,
-    async execute(streamer) {
+    async execute(stream) {
         const db = mClient.db('guilds')
         const res = await db.listCollections().toArray()
-        
+        const streamer = stream.broadcaster_user_login
+
         res.forEach(async (guildColl) => {
             const guildId = guildColl.name
             const coll = db.collection(guildId)
-            const res = await coll.findOne({ event: 'Twitch/Live' })
+            const res = await coll.findOne({ event: 'Twitch/Online' })
             if(!res){
-                console.log('No Live Nofitication Channel')
+                return // ignore if no live channel set
             }
             const guild = dClient.guilds.cache.get(guildId)
             const channel = guild.channels.cache.get(res.channel)
@@ -60,18 +61,10 @@ module.exports = {
                     return channel.send({
                         embeds: [embed],
                         flags: MessageFlags.Ephemeral
-                    }).then(message => setTimeout(() => {
-                        message.deleteReply()
-                    }, 60000))
+                    })
                 }
             } catch (error) {
-                console.error(error)
-                return channel.send({
-                    content: `**[ERROR]:** Could not get stream info for *${escapeMarkdown(channelName)}*!\r\n${error}`,
-                    ephemeral: true
-                }).then(message => setTimeout(() => {
-                    message.deleteReply()
-                }, 60000))
+                return console.error
             }
         })
 
