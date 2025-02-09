@@ -95,10 +95,6 @@ module.exports = {
                 case "donate":
                     sendDonationAd()
                     break;
-                case "test":
-                    await emitShoutoutInfo(channel, userstate.username)
-                    // console.log(await getIDByName(userstate))
-                    break;
                 case "positivity":
                     sendPositivity()
                     break;
