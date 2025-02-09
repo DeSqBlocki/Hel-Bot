@@ -1,7 +1,7 @@
 // Event triggered by client connected to server
 
 const ReconnectingWebSocket = require("reconnecting-websocket");
-const { mClient } = require("../..");
+const { mClient, dClient } = require("../..");
 const { getIDByName } = require("../../functions");
 const { WebSocket, EventEmitter } = require("ws");
 const { default: axios } = require("axios");
@@ -107,14 +107,14 @@ module.exports = {
         }
         
         const conditions = [{
-            broadcaster_user_id: String(await getIDByName("desq_blocki"))
+            broadcaster_user_id: String(await getIDByName("x__hel__x"))
         }]
 
         subscribe(
             "stream.online",
             conditions[0],
             stream => {
-                console.log(`${stream.broadcaster_user_login} went offline`)
+dClient.emit('Twitch/Online', stream)
             }
         )
 
@@ -122,8 +122,7 @@ module.exports = {
             "stream.offline",
             conditions[0],
             stream => {
-                console.log(`${stream.broadcaster_user_login} went online`);
-updateChatMode(stream.broadcaster_user_id, 'on');
+dClient.emit('Twitch/Offline', stream);
             }
         )
     }
