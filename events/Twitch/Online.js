@@ -9,6 +9,7 @@ module.exports = {
         const db = mClient.db('guilds')
         const res = await db.listCollections().toArray()
         const streamer = stream.broadcaster_user_login
+        console.log(`${streamer} went live!`)
 
         res.forEach(async (guildColl) => {
             const guildId = guildColl.name
