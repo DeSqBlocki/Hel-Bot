@@ -122,7 +122,8 @@ module.exports = {
             "stream.offline",
             conditions[0],
             stream => {
-                console.log(`${stream.broadcaster_user_login} went online`)
+                console.log(`${stream.broadcaster_user_login} went online`);
+updateChatMode(stream.broadcaster_user_id, 'on');
             }
         )
     }
