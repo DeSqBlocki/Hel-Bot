@@ -161,4 +161,8 @@ async function getChannelInformation(streamer) {
     return await makeHelixRequest('GET', 'channels', { broadcaster_id });
 }
 
-module.exports = { getChannelInformation, updateChatMode, getIDByName, makeHelixRequest, delay, refreshAccessToken }
+async function getStreams(user_login){
+    return await makeHelixRequest('GET', 'streams', { user_login });
+}
+
+module.exports = { getChannelInformation, updateChatMode, getIDByName, makeHelixRequest, delay, refreshAccessToken, getStreams }
