@@ -1,8 +1,5 @@
 const axios = require("axios");
 const { mClient } = require(".");
-const ReconnectingWebSocket = require("reconnecting-websocket");
-const { WebSocket } = require("ws");
-const twitchEventSubWsUrl = 'wss://eventsub.wss.twitch.tv/ws';
 
 // Delay function for pauses
 function delay(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }

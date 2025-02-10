@@ -1,18 +1,14 @@
 // Event triggered by client connected to server
 
-const { RWSConnect, RWSDisconnect } = require("../../functions")
+const { tClient, mClient } = require("../..");
+const { refreshAccessToken } = require("../../functions")
+const tmi = require('tmi.js')
 
 module.exports = {
     name: 'Twitch/Disconnected',
     once: false,
     async execute(reason) {
         console.log('Twitch disconnected:', reason);
-        try {
-            RWSDisconnect()
-        } catch (error) {
-            console.error
-        }
-        
         if (reason.includes('Login authentication failed')) {
             try {
                 await refreshAccessToken();

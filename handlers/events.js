@@ -1,9 +1,6 @@
 const fs = require('node:fs')
 const path = require('node:path');
-var { dClient, mClient, tClient } = require('..');
-const { refreshAccessToken } = require('../functions');
-const tmi = require('tmi.js')
-
+var { dClient, tClient } = require('..');
 const folderPath = path.join(__dirname, '../events')
 const eventFolders = fs.readdirSync(folderPath)
 
