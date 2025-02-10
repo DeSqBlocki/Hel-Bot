@@ -1,6 +1,7 @@
 // Event triggered by client connected to server
 
-const { tClient, mClient } = require("../..");
+const { mClient, dClient } = require("../..");
+var { tClient } = require('../..')
 const { refreshAccessToken } = require("../../functions")
 const tmi = require('tmi.js')
 
@@ -13,13 +14,6 @@ module.exports = {
             try {
                 await refreshAccessToken();
                 console.log('Reinitializing Twitch client after token refresh...');
-
-                try {
-                    await tClient.disconnect();
-                } catch (err) {
-                    console.warn('Twitch client already disconnected:', err.message);
-                }
-
                 const db = mClient.db("clients");
                 const credentialCollection = db.collection('credentials');
                 const tCreds = await credentialCollection.findOne({ service: 'twitch' });
@@ -34,8 +28,8 @@ module.exports = {
                     },
                     channels: tClient.channels,
                 });
-
-                await tClient.connect();
+                const { address, port } = await tClient.connect()
+                dClient.emit("Twitch/Connected", address, port)
                 console.log('Twitch client reconnected successfully.');
             } catch (error) {
                 console.error('Failed to refresh token and reconnect:', error);

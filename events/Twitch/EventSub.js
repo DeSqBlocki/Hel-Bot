@@ -12,6 +12,7 @@ module.exports = {
     name: 'Twitch/EventSub',
     once: false,
     async execute() {
+        console.log('Starting Event Subs...')
         const endpoint = `wss://eventsub.wss.twitch.tv/ws`
 
         const db = mClient.db('clients')
@@ -38,6 +39,9 @@ module.exports = {
         }
         function onDisconnect(reason) {
             console.log(`Disconnecting due to reason`, reason)
+            if(connection.readyState === connection.OPEN){
+                connection.close(4003, 'manual disconnect')
+            }
         }
         function connect() {
             connection = new ReconnectingWebSocket(endpoint, [], {
@@ -88,6 +92,7 @@ module.exports = {
                 subscriptionPayload, {
                 headers: headers
             })
+            console.log(res)
             console.log(`Subscribed to ${type}`)
             subscribedEvents[type] = listener
             return true
