@@ -92,7 +92,6 @@ module.exports = {
                 subscriptionPayload, {
                 headers: headers
             })
-            console.log(res)
             console.log(`Subscribed to ${type}`)
             subscribedEvents[type] = listener
             return true
