@@ -39,9 +39,9 @@ module.exports = {
         }
         function onDisconnect(reason) {
             console.log(`Disconnecting due to reason`, reason)
-            if(connection.readyState === connection.OPEN){
-                connection.close(4003, 'manual disconnect')
-            }
+        }
+        function onError(error){
+            console.log(error)
         }
         function connect() {
             connection = new ReconnectingWebSocket(endpoint, [], {
@@ -52,6 +52,7 @@ module.exports = {
             return new Promise((resolve, reject) => {
                 connection.onclose = ({ reason }) => onDisconnect(reason, reject)
                 connection.onmessage = ({ data }) => onMessage(data, resolve)
+                connection.onerror = ({ error }) => onError(error) 
             })
         }
         function onMessage(data) {
@@ -96,6 +97,7 @@ module.exports = {
             subscribedEvents[type] = listener
             return true
         }
+        
         connect(options)
         if (options.debug) {
             events.on(WebsocketEvents.CONNECTED, () => {
@@ -109,7 +111,7 @@ module.exports = {
 
         const conditions = [{
             broadcaster_user_id: String(await getIDByName("x__hel__x"))
-        },{
+        }, {
             broadcaster_user_id: String(await getIDByName("desq_blocki"))
         }]
 
