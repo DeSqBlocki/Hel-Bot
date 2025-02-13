@@ -3,11 +3,11 @@ module.exports = {
     name: 'Command/positivity',
     once: false,
     async execute(channel, userstate, message, self) {
-        const db = mClient.db('channels')
+        const db = mClient.db('commands')
         const coll = db.collection(channel)
         const command = await coll.findOne({ name: 'positivity' })
 
-        // create if not exists
+        // create in disabled state if not exists
         if (!command) {
             await coll.insertOne({
                 name: 'positivity',
@@ -15,7 +15,7 @@ module.exports = {
             })
         }
 
-        if (!command.enabled){ return }
+        if (!command?.enabled){ return tClient.say(channel, `This command is currently disabled `) }
         
         async function sendPositivity() {
             // Function sends a random string of predetermined positivity, Donothon Top Donator Reward

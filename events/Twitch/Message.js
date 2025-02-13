@@ -21,7 +21,7 @@ module.exports = {
                 })
             }
         }
-        
+
         if (self) { return }
         if (knownBots.has(userstate.username)) { return }
 
@@ -54,7 +54,13 @@ module.exports = {
                     dClient.emit('Command/positivity', channel, userstate, message, self)
                     break;
                 case "commands":
-                    dClient.emit('Command/commands',  channel, userstate, message, self, args[1], args[2])
+                    dClient.emit('Command/commands', channel, userstate, message, self, args[1], args[2])
+                    break;
+                case "settings":
+                    dClient.emit('Command/settings', channel, userstate, message, self, args[1], args[2])
+                    break;
+                case "so":
+                    dClient.emit('Command/so', channel, userstate, message, self, args[1])
                     break;
                 default:
                     break;

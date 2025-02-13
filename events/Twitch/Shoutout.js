@@ -1,4 +1,4 @@
-const { tClient } = require("../..");
+const { tClient, mClient } = require("../..");
 const { getChannelInformation } = require("../../functions");
 
 // Event triggered by Custom Shoutout emitted in Messages.js
@@ -9,7 +9,21 @@ module.exports = {
     name: 'Twitch/Shoutout',
     once: false,
     async execute(reason, channel, username) {
-        
+        // Check if shoutout is enabled
+        const db = mClient.db('settings')
+        const coll = db.collection(channel)
+        const setting = await coll.findOne({ name: 'shoutout' })
+
+        // create in disabled state if not exists
+        if (!setting) {
+            await coll.insertOne({
+                name: 'shoutout',
+                enabled: false // default
+            })
+        }
+
+        if (!setting?.enabled && reason != 'command' ){ return }
+
         // Function to perform shoutout (Nightbot or custom)
         async function doShoutouts(channel, user) {
             try {
