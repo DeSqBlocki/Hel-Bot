@@ -5,33 +5,44 @@ HelBot v5 introduces an improved background logic structure, streamlined integra
 ### Database Structure:
 
 **client.credentials**:  
-- `_id`  
-- `client_id`  
-- `client_secret`  
-- `token`  
-- `service`  
-- `mod_id`  
+- `client_id`  (twitch:discord)
+- `client_secret`  (twitch:discord)
+- `token`   (access_token:token)
+- `service`  (twitch:discord)
+- `mod_id`  (twitch only)
 
 **shoutouts.#channel**:  
-- `_id`  
 - `user`  
 - `created_at`  
 
 **guilds.id**:  
-- `_id`  
-- `settings`
-- `channels` 
+- `event`
+- `channel` 
+
+**commands.channel**:  
+- `name`
+- `enabled` 
+
+**settings.channel**:  
+- `name`
+- `enabled` 
 
 ### Chat Commands:
 
 **Update Chat Mode** (Mods & Broadcaster only)  
 - `$mode [on:off]`  
 
-**Get a Random Positive Reminder**  
+**Get A Positive Reminder**  
 - `$positivity`  
 
 **View Donothon/Charity Event Information**  
 - `$donate`  
+
+**View / Manage Settings**  
+- `$commands [enable:disable] [setting]`
+
+**View / Manage Commands**  
+- `$commands [enable:disable] [command]`  
 
 ### Behaviour:
 
